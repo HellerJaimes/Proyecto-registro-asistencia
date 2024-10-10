@@ -1,5 +1,7 @@
 <?php
-require 'db_config.php';  // Incluir el archivo de configuración de la base de datos
+
+require '../../db_config.php';  // Incluir el archivo de configuración de la base de datos
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username-login'], $_POST['password-login'])) {
     // Validar y limpiar los datos del formulario
