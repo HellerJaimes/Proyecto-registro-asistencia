@@ -1,10 +1,32 @@
+<?php
+session_start();
+
+// Verificar si el superadmin está autenticado
+if (!isset($_SESSION['superadmin_logged_in'])) {
+    header("Location: superadmin.php"); // Redirigir si no está autenticado
+    exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $type = $_POST['registro']; // Obtener la opción seleccionada
+
+    // Redirigir a la página correspondiente
+    if ($type === 'estudiante') {
+        header("Location: superadmin_dashboardEstudiantes.php");
+    } elseif ($type === 'profesor') {
+        header("Location: superadmin_dashboardProfesores.php");
+    }
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Superadmin</title>
-
+    <title>Seleccionar Registro</title>
+    
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 
@@ -20,16 +42,8 @@
             height: 100vh;
             margin: 0;
         }
-        .navbar {
-            background-color: #1a1a1a; /* Barra de navegación en negro */
-            color: #ffffff;
-        }
-        .navbar-brand {
-            color: #ffffff;
-            font-weight: 600;
-        }
         .container {
-            max-width: 400px;
+            max-width: 500px;
             background-color: #333333; /* Fondo del formulario en gris oscuro */
             padding: 2rem;
             border-radius: 8px;
@@ -41,7 +55,7 @@
             margin-bottom: 1.5rem;
             color: #e9ecef; /* Tono gris claro */
         }
-        .form-label {
+        .form-group label {
             font-weight: 500;
             color: #b8b8b8; /* Texto de etiquetas en gris claro */
         }
@@ -69,28 +83,25 @@
         .btn-primary:hover {
             background-color: #0f5bb5; /* Azul más oscuro al pasar el ratón */
         }
+        .text-center {
+            margin-top: 1.5rem;
+        }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="container-fluid">
-            <span class="navbar-brand mb-0 h1">Sistema de Superadmin</span>
-        </div>
-    </nav>
-
     <div class="container mt-5">
-        <h1 class="text-center">Login Superadmin</h1>
-        <form action="auth_admin.php" method="POST">
-            <div class="mb-3">
-                <label for="useradmin" class="form-label">Nombre de usuario:</label>
-                <input type="text" class="form-control" id="useradmin" name="useradmin" required>
+        <h1 class="text-center">Registro de Estudiante o Profesor</h1>
+        <form method="POST" action="">
+            <div class="form-group mb-3">
+                <label for="registro">Elija el tipo de registro que desea realizar:</label>
+                <select class="form-control" id="registro" name="registro">
+                    <option value="estudiante">Registrar Estudiante</option>
+                    <option value="profesor">Registrar Profesor</option>
+                </select>
             </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Contraseña:</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Continuar</button>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
         </form>
     </div>
 

@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (sqlsrv_has_rows($stmt)) {
             // Si se encuentra el usuario, se considera que ha iniciado sesión correctamente
             $_SESSION['superadmin_logged_in'] = true;
-            header("Location: superadmin_dashboard.php"); // Cambia a la ruta de tu dashboard
+            header("Location: registro_opciones.php"); // Cambia a la ruta de tu dashboard
             exit();
         } else {
             // Si las credenciales son incorrectas, redirigir con un mensaje de error
