@@ -14,38 +14,20 @@ $sql = '';
 $params = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Procesar el formulario de agregar estudiante
-    $nombre = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_STRING);
-    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
-    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
-    $correo = filter_input(INPUT_POST, 'correo', FILTER_SANITIZE_EMAIL);
-    $telefono = filter_input(INPUT_POST, 'telefono', FILTER_SANITIZE_STRING);
-    $programaID = filter_input(INPUT_POST, 'programa', FILTER_SANITIZE_NUMBER_INT);
+    // Procesar el formulario de agregar aula
+    $nombreAula = filter_input(INPUT_POST, 'nombreAula', FILTER_SANITIZE_STRING);
+    $capacidad = filter_input(INPUT_POST, 'capacidad', FILTER_SANITIZE_NUMBER_INT);
+    $ubicacion = filter_input(INPUT_POST, 'ubicacion', FILTER_SANITIZE_STRING);
 
-    // Insertar en la tabla Personas
-    $sql = "INSERT INTO Personas (Nombre, correo, telefono) VALUES (?, ?, ?); SELECT SCOPE_IDENTITY() AS PersonaID;";
-    $params = array($nombre, $correo, $telefono);
+    // Insertar en la tabla Aulas
+    $sql = "INSERT INTO Aulas (NombreAula, Capacidad, Ubicacion) VALUES (?, ?, ?)";
+    $params = array($nombreAula, $capacidad, $ubicacion);
 
     $stmt = sqlsrv_prepare($conn_sis, $sql, $params);
     if ($stmt && sqlsrv_execute($stmt)) {
-        sqlsrv_next_result($stmt);
-        sqlsrv_fetch($stmt);
-        $personaID = sqlsrv_get_field($stmt, 0);
+        $message = "Aula agregada exitosamente.";
     } else {
-        $message = "Error al agregar el registro en Personas: " . print_r(sqlsrv_errors(), true);
-    }
-
-    // Insertar en la tabla Estudiantes
-    if ($personaID) {
-        $sql = "INSERT INTO Estudiantes (PersonaID, ProgramaID, username, password) VALUES (?, ?, ?, ?)";
-        $params = array($personaID, $programaID, $username, $password);
-
-        $stmt = sqlsrv_prepare($conn_sis, $sql, $params);
-        if ($stmt && sqlsrv_execute($stmt)) {
-            $message = "Estudiante agregado exitosamente.";
-        } else {
-            $message = "Error al agregar el registro en Estudiantes: " . print_r(sqlsrv_errors(), true);
-        }
+        $message = "Error al agregar el registro en Aulas: " . print_r(sqlsrv_errors(), true);
     }
 
     sqlsrv_free_stmt($stmt);
@@ -183,7 +165,7 @@ sqlsrv_close($conn_sis);
             <div class="col-md-8">
                 <div class="card shadow-sm">
                     <div class="card-header text-center">
-                        <h5>Agregar Estudiante</h5>
+                        <h5>Agregar Aula</h5>
                     </div>
                     <div class="card-body">
                         <!-- Mensaje de confirmación -->
@@ -193,57 +175,25 @@ sqlsrv_close($conn_sis);
                             </div>
                         <?php endif; ?>
 
-                        <!-- Formulario para agregar estudiantes -->
+                        <!-- Formulario para agregar aula -->
                         <form method="post">
                             <div class="form-section">
-                                <label for="nombre" class="form-label">Nombre</label>
-                                <input type="text" id="nombre" name="nombre" class="form-control" required>
+                                <label for="nombreAula" class="form-label">Nombre del Aula</label>
+                                <input type="text" id="nombreAula" name="nombreAula" class="form-control" required>
                             </div>
 
                             <div class="form-section">
-                                <label for="correo" class="form-label">Correo</label>
-                                <input type="email" id="correo" name="correo" class="form-control" required>
-                            </div>
+                                <label for="capacidad" class="form-label">Capacidad</label>
+                                <input type="number" id="capacidad" name="capacidad" class="form-control" min="1" required>
+                           </div>
 
                             <div class="form-section">
-                                <label for="telefono" class="form-label">Teléfono</label>
-                                <input type="text" id="telefono" name="telefono" class="form-control" required>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-column">
-                                    <div class="form-section">
-                                        <label for="username" class="form-label">Username</label>
-                                        <input type="text" id="username" name="username" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="form-column">
-                                    <div class="form-section">
-                                        <label for="password" class="form-label">Password</label>
-                                        <input type="password" id="password" name="password" class="form-control" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-section">
-                                <label for="programa" class="form-label">Seleccionar Programa</label>
-                                <select id="programa" name="programa" class="form-select" required>
-                                    <option value="" disabled selected>Seleccione un programa</option>
-                                    <option value="21">Ingeniería de Sistemas</option>
-                                    <option value="22">Ingeniería Industrial</option>
-                                    <option value="23">Administración de Empresas</option>
-                                    <option value="24">Contaduría Pública</option>
-                                    <option value="25">Ingeniería Electrónica</option>
-                                    <option value="26">Psicología</option>
-                                    <option value="27">Derecho</option>
-                                    <option value="28">Medicina</option>
-                                    <option value="29">Arquitectura</option>
-                                    <option value="30">Diseño Gráfico</option>
-                                </select>
+                                <label for="ubicacion" class="form-label">Ubicación</label>
+                                <input type="text" id="ubicacion" name="ubicacion" class="form-control" required>
                             </div>
 
                             <div class="btn-container">
-                                <button type="submit" class="btn btn-primary">Agregar Estudiante</button>
+                                <button type="submit" class="btn btn-primary">Agregar Aula</button>
                             </div>
                         </form>
                     </div>
@@ -251,7 +201,7 @@ sqlsrv_close($conn_sis);
             </div>
         </div>
     </div>
-    
+
     <!-- Bootstrap JS (opcional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

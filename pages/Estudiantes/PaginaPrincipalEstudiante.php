@@ -26,8 +26,6 @@ if ($stmt && sqlsrv_execute($stmt)) {
 
 // Obtener el EstudianteID
 $estudianteID = $studentInfo['EstudianteID'];
-
-// Código HTML para mostrar la información del estudiante
 ?>
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="dark">
@@ -37,6 +35,9 @@ $estudianteID = $studentInfo['EstudianteID'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página Principal - Estudiante</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+    <!-- FullCalendar JavaScript -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 </head>
 
 <body>
@@ -83,9 +84,9 @@ $estudianteID = $studentInfo['EstudianteID'];
                 $cursosStmt = sqlsrv_prepare($conn_sis, $cursosQuery, $cursosParams);
 
                 if ($cursosStmt && sqlsrv_execute($cursosStmt)) {
-                    $cursoEncontrado = false; // Inicializa una variable para controlar si se encontraron cursos
+                    $cursoEncontrado = false;
                     while ($curso = sqlsrv_fetch_array($cursosStmt, SQLSRV_FETCH_ASSOC)) {
-                        $cursoEncontrado = true; // Si se encuentra al menos un curso, cambia la bandera
+                        $cursoEncontrado = true;
                         echo "<tr>
                             <td>" . htmlspecialchars($curso['NombreCurso']) . " (" . htmlspecialchars($curso['Creditos']) . " créditos)</td>
                             <td>" . htmlspecialchars($curso['nombre_profesor']) . "</td>
@@ -93,7 +94,7 @@ $estudianteID = $studentInfo['EstudianteID'];
                             <td>
                                 <a href='#' data-claseid='" . $curso['ClaseID'] . "' data-aulaid='" . $curso['AulaID'] . "' class='btn btn-success' data-bs-toggle='modal' data-bs-target='#asistenciaModal'>Registrar Asistencia</a>
                             </td>
-                        </tr>"; // Cierra la fila después de los botones
+                        </tr>";
                     }
                     if (!$cursoEncontrado) {
                         echo "<tr><td colspan='4'>No se encontraron cursos inscritos.</td></tr>";
@@ -136,6 +137,8 @@ $estudianteID = $studentInfo['EstudianteID'];
         </div>
     </div>
 
+
+    <!-- Script para manejar el modal de asistencia -->
     <script>
         var asistenciaModal = document.getElementById('asistenciaModal');
         asistenciaModal.addEventListener('show.bs.modal', function (event) {

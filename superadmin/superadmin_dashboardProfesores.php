@@ -127,9 +127,12 @@ sqlsrv_close($conn_sis);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Navbar -->
-    <nav class="navbar bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <span class="navbar-brand mb-0 h1">Sistema de Registro de Asistencias</span>
+            <span class="navbar-brand">Sistema de Registro de Asistencias</span>
+            <div class="text-end mb-1">
+            <a href="registro_opciones.php" class="btn btn-primary">Volver Atrás</a>
+            </div>
         </div>
     </nav>
 

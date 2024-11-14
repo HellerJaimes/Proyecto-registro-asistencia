@@ -155,6 +155,7 @@ $profesorID = $profesorInfo['ProfesorID'];
             <a href="ver_clases.php" class="list-group-item list-group-item-action">Ver mis clases</a>
             <a href="registro_Asistencia_Profe.php" class="list-group-item list-group-item-action">Registrar Asistencia</a>
             <a href="gestionar_materias.php" class="list-group-item list-group-item-action">Gestionar Materias</a>
+            <a href="ver_asistencias.php" class="list-group-item list-group-item-action">Ver asistencias de estudiantes</a>
         </div>
     </div>
 

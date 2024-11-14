@@ -27,7 +27,7 @@ if ($stmt && sqlsrv_execute($stmt)) {
 // Obtener el ProfesorID
 $profesorID = $profesorInfo['ProfesorID'];
 
-// Obtener las clases impartidas por el profesor
+// Obtener las clases impartidas por el profesor, junto con los días de la semana
 $clasesSql = "SELECT C.CursoID, C.NombreCurso, H.DiaSemana, H.HoraInicio, H.HoraFin, CL.ClaseID, CL.AulaID
               FROM Clases CL
               JOIN Cursos C ON CL.CursoID = C.CursoID
@@ -80,7 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="dark">
 <head>
@@ -93,8 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <nav class="navbar bg-body-tertiary">
         <div class="container-fluid">
             <span class="navbar-brand mb-0 h1">Sistema de Registro de Asistencias</span>
-            <form class="d-flex" action="../logout.php" method="post">
-                <button class="btn btn-outline-danger" type="submit">Cerrar sesión</button>
+            <form class="d-flex" action="PaginaPrincipalProfesores.php" method="post">
+                <button class="btn btn-outline-danger" type="submit">Atras</button>
             </form>
         </div>
     </nav>
@@ -128,6 +127,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="date" class="form-control" name="fechaAsistencia" id="fechaAsistencia" required>
             </div>
 
+            <div id="horario-container"></div>
+
             <div class="mb-3">
                 <label for="estado" class="form-label">Estado</label>
                 <select class="form-select" name="estado" id="estado" required>
@@ -151,39 +152,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-        function cargarEstudiantes() {
-            const claseID = document.getElementById('claseID').value;
-            const estudiantesContainer = document.getElementById('estudiantes-container');
+    // Función para cargar los estudiantes y el horario basados en el curso seleccionado
+    function cargarEstudiantes() {
+        const claseID = document.getElementById('claseID').value;
+        const estudiantesContainer = document.getElementById('estudiantes-container');
+        const horarioContainer = document.getElementById('horario-container');
 
-            // Limpiar el contenedor de estudiantes
-            estudiantesContainer.innerHTML = '';
+        // Limpiar los contenedores de estudiantes y horario
+        estudiantesContainer.innerHTML = '';
+        horarioContainer.innerHTML = '';
 
-            if (claseID) {
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', 'get_estudiantes.php?claseID=' + claseID, true);
-                xhr.onload = function() {
-                    if (this.status === 200) {
-                        const estudiantes = JSON.parse(this.responseText);
-                        estudiantes.forEach(estudiante => {
-                            estudiantesContainer.innerHTML += `
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="estudianteID" id="estudiante_${estudiante.EstudianteID}" value="${estudiante.EstudianteID}" required>
-                                    <label class="form-check-label" for="estudiante_${estudiante.EstudianteID}">
-                                        ${estudiante.Nombre}
-                                    </label>
-                                </div>
-                            `;
-                        });
+        if (claseID) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'get_estudiantes.php?claseID=' + claseID, true);
+            xhr.onload = function() {
+                if (this.status === 200) {
+                    const data = JSON.parse(this.responseText);
+                    
+                    // Cargar los estudiantes
+                    data.estudiantes.forEach(estudiante => {
+                        estudiantesContainer.innerHTML += `
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="estudianteID" id="estudiante_${estudiante.EstudianteID}" value="${estudiante.EstudianteID}" required>
+                                <label class="form-check-label" for="estudiante_${estudiante.EstudianteID}">
+                                    ${estudiante.Nombre}
+                                </label>
+                            </div>
+                        `;
+                    });
+
+                    // Mostrar el horario de la clase
+                    const horario = data.horario;
+                    if (horario) {
+                        horarioContainer.innerHTML = `
+                            <strong>Horario de la clase:</strong> ${horario.DiaSemana} de ${horario.HoraInicio} a ${horario.HoraFin}
+                        `;
+                    } else {
+                        horarioContainer.innerHTML = '<strong>No se encontró el horario para este curso.</strong>';
                     }
-                };
-                xhr.send();
-            }
+                }
+            };
+            xhr.send();
         }
+    }
     </script>
-    <div class="text-center mb-4">
-            <a href="PaginaPrincipalProfesores.php" class="btn btn-primary">Volver Atrás</a>
-        </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

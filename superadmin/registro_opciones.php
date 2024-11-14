@@ -13,8 +13,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Redirigir a la página correspondiente
     if ($type === 'estudiante') {
         header("Location: superadmin_dashboardEstudiantes.php");
+
     } elseif ($type === 'profesor') {
         header("Location: superadmin_dashboardProfesores.php");
+
+    } elseif ($type === 'aula') {
+    header("Location: superadmin_dashboardAulas.php");
+    
+    } elseif ($type === 'curso') {
+    header("Location: superadmin_dashboardCursos.php");
+    }
+
+    elseif ($type === 'materia') {
+    header("Location: superadmin_dashboardMaterias.php");
+    }
+
+    elseif ($type === 'curso_materia') {
+    header("Location: superadmin_dashboardCurso_Materia.php");
+    }
+
+    elseif ($type === 'estudiante_clase') {
+    header("Location: superadmin_dashboardEstudiante_Clase.php");
+    }
+
+    elseif ($type === 'programa') {
+    header("Location: superadmin_dashboardProgramas.php");
+    }
+
+    elseif ($type === 'clase') {
+    header("Location: superadmin_dashboardClases.php");
     }
     exit();
 }
@@ -26,7 +53,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seleccionar Registro</title>
-    
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Sistema de Registro de Asistencias</span>
+            <form class="d-flex" action="../pages/logout.php" method="post">
+          <button class="btn btn-outline-danger" type="submit">Cerrar sesión</button>
+          </form>
+
+        </div>
+    </nav>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 
@@ -90,13 +125,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Registro de Estudiante o Profesor</h1>
+        <h1 class="text-center">Registro de Datos</h1>
         <form method="POST" action="">
             <div class="form-group mb-3">
                 <label for="registro">Elija el tipo de registro que desea realizar:</label>
                 <select class="form-control" id="registro" name="registro">
                     <option value="estudiante">Registrar Estudiante</option>
                     <option value="profesor">Registrar Profesor</option>
+                    <option value="aula">Registrar Aula</option>
+                    <option value="curso">Registrar Curso</option>
+                    <option value="materia">Registrar Materia</option>
+                    <option value="curso_materia">Registrar relación Curso_Materia</option>
+                    <option value="estudiante_clase">Registrar relación Estudiante_Clase</option>
+                    <option value="programa">Registrar Programa</option>
+                    <option value="clase">Registrar Clase</option>
+                    
                 </select>
             </div>
             <div class="text-center">
