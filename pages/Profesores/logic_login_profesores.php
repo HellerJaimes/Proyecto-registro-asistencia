@@ -1,40 +1,54 @@
 <?php
+session_start();
+require '../../db_config.php';
 
-require '../../db_config.php';  // Incluir el archivo de configuración de la base de datos
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Activar buffer de salida para evitar cualquier texto previo a la redirección
+    ob_start();
 
+    // Obtener y limpiar los datos del formulario
+    $usernameP = trim(filter_input(INPUT_POST, 'usernameP', FILTER_SANITIZE_STRING));
+    $password = trim(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING));
+// Consultar solo el usernameP para verificar si el usuario existe
+$sql = "SELECT * FROM Profesores WHERE usernameP = ?";
+$params = array($usernameP);
+$stmt = sqlsrv_prepare($conn_sis, $sql, $params);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username-login'], $_POST['password-login'])) {
-    // Validar y limpiar los datos del formulario
-    $username = filter_input(INPUT_POST, 'username-login', FILTER_SANITIZE_STRING);
-    $password = filter_input(INPUT_POST, 'password-login', FILTER_SANITIZE_STRING);
+if ($stmt && sqlsrv_execute($stmt)) {
+    if (sqlsrv_has_rows($stmt)) {
+        // Usuario existe, verificar contraseña
+        $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
-    $sql = "SELECT password FROM Usuarios WHERE username = ?";
-    $params = array($username);
-    $stmt = sqlsrv_prepare($conn_sis, $sql, $params);
+        // Sanitizar la contraseña de la base de datos
+        $dbPassword = trim($row['password']);
 
-    if ($stmt && sqlsrv_execute($stmt)) {
-        if (sqlsrv_has_rows($stmt)) {
-            $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
-            $hashedPassword = $row['password'];
-
-            if (password_verify($password, $hashedPassword)) {
-                session_start();
-                $_SESSION['username'] = $username;
-                header("Location: PaginaPrincipal.php");
-                exit();
-            } else {
-                header("Location: index.php?error=incorrect_password");
-                exit();
-            }
+        if ($dbPassword === $password) {
+            // Iniciar sesión y redirigir
+            $_SESSION['usernameP'] = $usernameP; 
+            
+            header("Location: PaginaPrincipalProfesores.php");
+            exit();
         } else {
-            header("Location: index.php?error=user_not_found");
+            // Contraseña incorrecta
+            header("Location: login_profesores.php?error=invalid_credentials");
             exit();
         }
     } else {
-        die(print_r(sqlsrv_errors(), true));  // Error en la consulta
+        // Usuario no encontrado
+        header("Location: login_profesores.php?error=user_not_found");
+        exit();
     }
+} else {
+    // Error en la ejecución de la consulta
+    die("Error en la consulta: " . print_r(sqlsrv_errors(), true));
+}
+
 
     sqlsrv_free_stmt($stmt);
     sqlsrv_close($conn_sis);
+    ob_end_flush(); // Limpiar y desactivar el buffer
+} else {
+    // Redirigir si no es un método POST
+    header("Location: index.php");
+    exit();
 }
-?>

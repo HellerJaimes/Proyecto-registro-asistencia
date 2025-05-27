@@ -1,91 +1,105 @@
 <!DOCTYPE html>
-<?php
-    // Capturar los errores de la URL
-    $error = isset($_GET['error']) ? $_GET['error'] : '';
-?>
-
 <html lang="es" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro e Inicio de Sesión de PROFESORES</title>
+    <title>Inicio de Sesión - Profesores</title>
+    
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Estilos Personalizados -->
+    <style>
+        body {
+            background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            max-width: 400px;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #ffffff;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+        }
+        .form-label {
+            font-weight: 500;
+            color: #b8daff;
+        }
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1);
+        }
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        }
+        .btn-primary {
+            background-color: #198754;
+            border: none;
+            padding: 0.75rem;
+            font-size: 1.2rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #145a32;
+        }
+        .alert {
+            text-align: center;
+            color: #fff;
+            background-color: rgba(255, 0, 0, 0.8);
+            border: none;
+        }
+    </style>
 </head>
 <body>
+    <div class="login-container">
+        <h2>Inicio de Sesión</h2>
+        
+        <?php if (isset($_GET['error'])): ?>
+            <div class="alert alert-danger" role="alert">
+                <?php
+                if ($_GET['error'] === 'invalid_credentials') {
+                    echo "Username o contraseña incorrecta. Inténtalo de nuevo.";
+                } elseif ($_GET['error'] === 'user_not_found') {
+                    echo "El usuario no fue encontrado. Verifica tu username.";
+                } elseif ($_GET['error'] === 'incorrect_password') {
+                    echo "Contraseña incorrecta. Inténtalo de nuevo.";
+                }
+                ?>
+            </div>
+        <?php endif; ?>
+
+        <form action="logic_login_profesores.php" method="post">
+            <div class="mb-3">
+                <label for="usernameP" class="form-label">Username</label>
+                <input type="text" class="form-control" id="usernameP" name="usernameP" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
-    <nav class="navbar bg-body-tertiary">
-        <div class="container-fluid">
-            <span class="navbar-brand mb-0 h1">Sistema de Registro de Asistencias</span>
-        </div>
-    </nav>
-
-    <br><br>
-    <h1 class="text-center">Bienvenido Usuario</h1>
-    <br><br><br>
-    <div class="d-grid gap-4 col-4 mx-auto">
-        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#iniciosesionmodal" style="--bs-btn-padding-y: 2rem; --bs-btn-padding-x: 1rem; --bs-btn-font-size: 2rem;">Inicio de sesión</button>
-        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#registromodal" style="--bs-btn-padding-y: 2rem; --bs-btn-padding-x: 1rem; --bs-btn-font-size: 2rem;">Registrarse</button>
-    </div>
-
-    <!-- Modal de Inicio de Sesión -->
-    <div class="modal fade" id="iniciosesionmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Ingrese su cuenta</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Mostrar mensajes de error -->
-                    <?php if ($error == 'incorrect_password'): ?>
-                        <div class="alert alert-danger" role="alert">
-                            Contraseña incorrecta. Intente nuevamente.
-                        </div>
-                    <?php elseif ($error == 'user_not_found'): ?>
-                        <div class="alert alert-danger" role="alert">
-                            Usuario no encontrado.
-                        </div>
-                    <?php endif; ?>
-
-                    <form id="iniciosesion-form" action="login.php" method="POST">
-                        <label for="username-login">Nombre de usuario:</label>
-                        <input type="text" class="form-control mb-3" placeholder="Username" name="username-login" id="username-login" required>
-                        <br>
-                        <label for="password-login">Contraseña:</label>
-                        <input type="password" class="form-control mb-3" placeholder="Contraseña" name="password-login" id="password-login" required>
-                        <br>
-                        <button type="submit" class="d-grid gap-3 col-4 mx-auto btn btn-primary btn-lg">Login</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Registro Modal -->
-    <div class="modal fade" id="registromodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Crea una nueva cuenta</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="registro-form" action="registro.php" method="POST">
-                        <label for="registro-username">Nombre de usuario:</label>
-                        <input type="text" class="form-control mb-3" placeholder="Username" name="registro-username" id="registro-username" required>
-                        <br>
-                        <label for="registro-password">Contraseña:</label>
-                        <input type="password" class="form-control mb-3" placeholder="Contraseña" name="registro-password" id="registro-password" required>
-                        <br>
-                        <button type="submit" class="d-grid gap-3 col-4 mx-auto btn btn-primary btn-lg">Registro</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </body>
 </html>
